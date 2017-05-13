@@ -9,14 +9,19 @@ replace these 4 file:
 # usage
 
 `build/tools/convert_imageset image/ label/txt out/lmdb/`
+
 same as the original
 
 # note
+
 add datum.labels
+
 all label save into datum.labels
 
 Data layer top[0] unchange
+
 Data layer top[1] is labels [reshape (batch_size, labels_size(), 1, 1)]
 
 can not use Accuracy layer
+
 I don't know how to solve it
