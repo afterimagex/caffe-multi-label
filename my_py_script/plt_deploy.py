@@ -5,7 +5,7 @@ import os
 import getopt
 import sys
 
-caffe_root = '/home/lab210/WS/caffe'
+caffe_root = '/home/lab704/caffe'
 sys.path.append(caffe_root + '/python')
 import caffe
 

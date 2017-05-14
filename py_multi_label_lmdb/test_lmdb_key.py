@@ -23,7 +23,7 @@ for key, value in lmdb_cursor: # 循环获取数据
     height = datum.height
     width = datum.width
     label = datum.label
-    #print datum.data
+    #print label, type(label)
     flat_x = numpy.fromstring(datum.data, dtype=numpy.uint8)
     #flat_x = numpy.fromstring(datum.data)
     data_type = flat_x.dtype

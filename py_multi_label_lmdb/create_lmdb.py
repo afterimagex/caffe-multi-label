@@ -17,13 +17,13 @@ SHUFFLE = False
 
 def this_help():
     print '{:-<40}'.format('')
-    print '{:<10}'.format('usage:')
-    print '{:<10}{:<10}'.format('--help', 'show help')
-    print '{:<10}{:<10}'.format('--shuffle', 'shuffle image')
-    print '{:<10}{:<10}'.format('-l', 'label.txt')
-    print '{:<10}{:<10}'.format('-i', 'image dir')
-    print '{:<10}{:<10}'.format('-o', 'output')
-    print '{:<10}'.format('example:')
+    print '{:<20}'.format('usage:')
+    print '{:<20}{:<10}'.format('-l', 'label txt')
+    print '{:<20}{:<10}'.format('-i', 'image dir')
+    print '{:<20}{:<10}'.format('-o', 'output dir')
+    print '{:<20}{:<10}'.format('--help', 'show help')
+    print '{:<20}{:<10}'.format('--shuffle', 'shuffle image')
+    print '{:<20}'.format('example:')
     print '{} {}'.format('python this.py', '-l label.txt -i image_dir -o lmdb_train/')
     print '{:-<40}'.format('')
 
@@ -44,13 +44,14 @@ def label2lmdb(label_in, img_dir, db_out):
     im_name = []
     label = []
     labels = open(label_in, 'r').readlines()
+    
     if SHUFFLE:
         random.shuffle(labels)
 
     for index, value in enumerate(labels):
         tmp_list = value.strip().split(' ')
         im_name.append(tmp_list[0])
-        label.append(map(float, tmp_list[1:]))
+        label.append(map(int, tmp_list[1:]))
     X = np.array(label, dtype=np.uint8).reshape(len(label), len(label[0]), 1)
     #map_size = X.nbytes * 1000
     #print '{:<20}{:<20}'.format('map_size:', map_size)
