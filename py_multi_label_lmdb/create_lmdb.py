@@ -28,16 +28,6 @@ def this_help():
     print '{:-<40}'.format('')
 
 
-def myArrayConverter(arr):
-    convertArr = []
-    for s in arr.ravel():    
-        try:
-            value = np.float32(s)
-        except ValueError:
-            value = s
-        convertArr.append(value)
-    return np.array(convertArr,dtype=object).reshape(arr.shape[0], 1, 1)
-
 def label2lmdb(label_in, img_dir, db_out):
     global SHUFFLE
     tmp_list = []
@@ -55,7 +45,7 @@ def label2lmdb(label_in, img_dir, db_out):
     X = np.array(label, dtype=np.uint8).reshape(len(label), len(label[0]), 1)
     #map_size = X.nbytes * 1000
     #print '{:<20}{:<20}'.format('map_size:', map_size)
-    label_db = lmdb.open(db_out+'/label', map_size=int(1e10))
+    label_db = lmdb.open(db_out+'/label', map_size=int(1e12))
     with label_db.begin(write=True) as l_txn:
         for index, ni in enumerate(X):
             datum = caffe.proto.caffe_pb2.Datum()
@@ -68,11 +58,12 @@ def label2lmdb(label_in, img_dir, db_out):
             str_id = '{:0>8}{}{}'.format(index, '_', im_name[index])
             l_txn.put(str_id.encode('ascii'), datum.SerializeToString())
     
-    img_db = lmdb.open(db_out+'/image', map_size=int(1e10))
+    img_db = lmdb.open(db_out+'/image', map_size=int(1e12))
     with img_db.begin(write=True) as i_txn:
         for index, img in enumerate(im_name):
             datum = caffe.proto.caffe_pb2.Datum()
             im = Image.open(img_dir + '/' + img)
+            im = im.resize((224, 224), Image.ANTIALIAS)
             im_array = np.array(im, dtype=np.uint8)
             im_array = im_array[:,:,::-1]
             im_array = im_array.transpose((2,0,1))
@@ -84,7 +75,6 @@ def label2lmdb(label_in, img_dir, db_out):
             str_id = '{:0>8}{}{}'.format(index, '_', img)
             print '[{:<20}] {:<20} {:<20}'.format(ctime(),str_id, im_array.shape)
             i_txn.put(str_id.encode('ascii'), datum.SerializeToString())
-            del im
 
 def check_dir(_dir):
     if not os.path.isdir(_dir):

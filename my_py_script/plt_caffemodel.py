@@ -36,8 +36,8 @@ def show_feature(data, padsize=1, padval=0):
     data = data.reshape((n, n) + data.shape[1:]).transpose((0, 2, 1, 3) + tuple(range(4, data.ndim + 1)))
     data = data.reshape((n * data.shape[1], n * data.shape[3]) + data.shape[4:])
     plt.imshow(data)
-    plt.show()
     plt.axis('off')
+    plt.show()
 
 def show_layer(net, layer, out_type):
     if layer == -1:
@@ -69,6 +69,7 @@ def show_layer(net, layer, out_type):
         show_feature(ts)
 
 if __name__ == '__main__':
+    caffe.set_mode_gpu()
     try:
         if len(sys.argv) < 5:
             this_help()
@@ -105,5 +106,7 @@ if __name__ == '__main__':
     print '{:<10}{:<20}{:<20}'.format('[index]', '[layer]', '[(n, c, h, w)]')
     for index, (x, y) in enumerate(net.params.items()):
         print '{:<10}{:<20}{:<20}'.format(index, x, y[0].data.shape)
+    #net.forward()
+    #show_feature(net.blobs['conv1'].data[0])
     show_layer(net, n_layer, out_type)
 

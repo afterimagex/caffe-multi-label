@@ -5,7 +5,7 @@ import os
 import getopt
 import sys
 
-caffe_root = '/home/lab704/caffe'
+caffe_root = '/home/lab210/WS/caffe'
 sys.path.append(caffe_root + '/python')
 import caffe
 
@@ -49,8 +49,6 @@ def put_image_into_net(im, net):
 def show_origin_image(img, net):
     f, (ax1, ax2) = plt.subplots(1, 2)
     ax1.imshow(img)
-    ax1.axis('off')
-    ax2.axis('off')
     ax1.set_title('origin image')
     ax1.set_xlabel('%s' % str(net.blobs['data'].data.shape))
     ax2.imshow(get_layer_image(net.blobs['data'].data[0]), cmap='gray')
@@ -58,7 +56,6 @@ def show_origin_image(img, net):
     ax2.set_xlabel('gary image 3 channel')
     
 def show_layer_image(c_layer, net):
-    global layer_dict
     if len(net.params[layer_dict[c_layer]][0].data.shape) < 4:
         print 'shape length should be = 4, can not show this layer'
         sys.exit()
@@ -75,12 +72,13 @@ if __name__ == '__main__':
     global layer_dict
     image_path = ''
     deploy_path = ''
+    model_path = ''
     c_layer = 0
     try:
         if len(sys.argv) < 5:
             this_help()
             sys.exit()
-        opts, args = getopt.getopt(sys.argv[1:], 'hi:d:', ['layer='])
+        opts, args = getopt.getopt(sys.argv[1:], 'hi:d:m:', ['layer='])
         for op, value in opts:
             if op == '-h':
                 this_help()
@@ -91,6 +89,9 @@ if __name__ == '__main__':
             if op == '-d':
                 deploy_path = str(value)
                 print '{:<10} {:>5}'.format('deploy:', value)
+            if op == '-m':
+                model_path = str(value)
+                print '{:<10} {:>5}'.format('deploy:', value)
             if op == '--layer':
                 c_layer = int(value)
     except getopt.GetoptError:
@@ -98,7 +99,7 @@ if __name__ == '__main__':
         sys.exit()
         
     img = caffe.io.load_image(image_path)
-    net = caffe.Net(deploy_path, caffe.TEST)
+    net = caffe.Net(deploy_path, model_path, caffe.TEST)
     put_image_into_net(img, net)
     get_net_parameter(net)
     #show_net_parameter()
